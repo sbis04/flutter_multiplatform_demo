@@ -101,7 +101,7 @@ workflows:
         script: flutter test
       - name: Install Podfile
         script: find . -name "Podfile" -execdir pod install \;
-      - name: Build iOS
+      - name: Build macOS
         script: flutter build macos --debug
     artifacts:
       - build/macos/**/*.app.zip
@@ -165,18 +165,21 @@ workflows:
         - pattern: '*'
           include: true
     scripts:
-      - flutter packages pub get
-      - flutter test
-      - |
-        # build windows
-
-        flutter config --enable-windows-desktop
-        flutter build windows --debug
+      - name: Install dependencies
+        script: flutter packages pub get
+      - name: Enable Windows
+        script: flutter config --enable-windows-desktop
+      - name: Testing
+        script: flutter test
+      - name: Build Windows
+        script: flutter build windows --debug
+      - name: Export bundle
+        script: 
+        | 
         cd build\windows\runner\debug
         7z a -r ..\debug.zip .\*
     artifacts:
       - build/windows/runner/*.zip
-      - '*.snap'
       - build/windows/**/*.msix
       - flutter_drive.log
     publishing:
