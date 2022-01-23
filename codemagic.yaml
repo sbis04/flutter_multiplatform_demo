@@ -93,17 +93,19 @@ workflows:
         - pattern: '*'
           include: true
     scripts:
-      - flutter packages pub get
-      - flutter config --enable-macos-desktop
-      - flutter test
-      - find . -name "Podfile" -execdir pod install \;
-      - flutter build macos --debug
+      - name: Install dependencies
+        script: flutter packages pub get
+      - name: Enable macOS
+        script: flutter config --enable-macos-desktop
+      - name: Testing
+        script: flutter test
+      - name: Install Podfile
+        script: find . -name "Podfile" -execdir pod install \;
+      - name: Build iOS
+        script: flutter build macos --debug
     artifacts:
       - build/macos/**/*.app.zip
       - build/macos/**/*.pkg
-      - '*.snap'
-      - build/windows/**/*.msix
-      - flutter_drive.log
     publishing:
       email:
         recipients:
