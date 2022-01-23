@@ -129,12 +129,19 @@ workflows:
         - pattern: '*'
           include: true
     scripts:
-      - flutter packages pub get
-      - flutter test
+      - name: Install dependencies
+        script: flutter packages pub get
+      - name: Enable Linux
+        script: flutter config --enable-linux-desktop
+      - name: Testing
+        script: flutter test
+      - name: Build Linux
+        script: flutter build linux
+      - name: Export bundle
+        script: cp -r build/linux/x64/release/bundle $FCI_EXPORT_DIR/bundle
     artifacts:
+      - build/linux/**/*.zip
       - '*.snap'
-      - build/windows/**/*.msix
-      - flutter_drive.log
     publishing:
       email:
         recipients:
