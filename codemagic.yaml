@@ -1,0 +1,176 @@
+workflows:
+  mobile-workflow:
+    name: Mobile Workflow
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: '*feature*'
+          include: true
+          source: true
+      tag_patterns:
+        - pattern: '*'
+          include: true
+    scripts:
+      - name: Set up local properties
+        script: echo "flutter.sdk=$HOME/programs/flutter" > "$FCI_BUILD_DIR/android/local.properties"
+      - name: Install dependencies
+        script: flutter packages pub get
+      - name: Testing
+        script: flutter test
+      - name: Build Android
+        script: flutter build apk --debug
+      - name: Install Podfile
+        script: find . -name "Podfile" -execdir pod install \;
+      - name: Build iOS
+        script: flutter build ios --debug --no-codesign
+    artifacts:
+      - build/**/outputs/apk/**/*.apk
+      - build/**/outputs/bundle/**/*.aab
+      - build/**/outputs/**/mapping.txt
+      - build/ios/ipa/*.ipa
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+    publishing:
+      email:
+        recipients:
+          - sbis1999@gmail.com
+  web-workflow:
+    name: Web Workflow
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: '*feature*'
+          include: true
+          source: true
+      tag_patterns:
+        - pattern: '*'
+          include: true
+    scripts:
+      - name: Install dependencies
+        script: flutter packages pub get
+      - name: Enable web
+        script: flutter config --enable-web
+      - name: Testing
+        script: flutter test
+      - name: Build web
+        script: 
+          |
+          flutter build web --release
+          cd build/web
+          7z a -r ../web.zip ./*
+    artifacts:
+      - build/web.zip
+    publishing:
+      email:
+        recipients:
+          - sbis1999@gmail.com
+  macos-workflow:
+    name: macOS Workflow
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: '*feature*'
+          include: true
+          source: true
+      tag_patterns:
+        - pattern: '*'
+          include: true
+    scripts:
+      - flutter packages pub get
+      - flutter config --enable-macos-desktop
+      - flutter test
+      - find . -name "Podfile" -execdir pod install \;
+      - flutter build macos --debug
+    artifacts:
+      - build/macos/**/*.app.zip
+      - build/macos/**/*.pkg
+      - '*.snap'
+      - build/windows/**/*.msix
+      - flutter_drive.log
+    publishing:
+      email:
+        recipients:
+          - sbis1999@gmail.com
+  linux-workflow:
+    name: Linux Workflow
+    instance_type: linux
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: '*feature*'
+          include: true
+          source: true
+      tag_patterns:
+        - pattern: '*'
+          include: true
+    scripts:
+      - flutter packages pub get
+      - flutter test
+    artifacts:
+      - '*.snap'
+      - build/windows/**/*.msix
+      - flutter_drive.log
+    publishing:
+      email:
+        recipients:
+          - sbis1999@gmail.com
+  windows-workflow:
+    name: Windows Workflow
+    instance_type: windows_x2
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: '*feature*'
+          include: true
+          source: true
+      tag_patterns:
+        - pattern: '*'
+          include: true
+    scripts:
+      - flutter packages pub get
+      - flutter test
+      - |
+        # build windows
+
+        flutter config --enable-windows-desktop
+        flutter build windows --debug
+        cd build\windows\runner\debug
+        7z a -r ..\debug.zip .\*
+    artifacts:
+      - build/windows/runner/*.zip
+      - '*.snap'
+      - build/windows/**/*.msix
+      - flutter_drive.log
+    publishing:
+      email:
+        recipients:
+          - sbis1999@gmail.com
