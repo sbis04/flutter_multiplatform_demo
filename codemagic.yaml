@@ -181,7 +181,6 @@ workflows:
     artifacts:
       - build/windows/runner/*.zip
       - build/windows/**/*.msix
-      - flutter_drive.log
     publishing:
       email:
         recipients:
