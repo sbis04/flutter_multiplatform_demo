@@ -175,9 +175,9 @@ workflows:
         script: flutter build windows --debug
       - name: Export bundle
         script: 
-        | 
-        cd build\windows\runner\debug
-        7z a -r ..\debug.zip .\*
+          | 
+          cd build\windows\runner\debug
+          7z a -r ..\debug.zip .\*
     artifacts:
       - build/windows/runner/*.zip
       - build/windows/**/*.msix
