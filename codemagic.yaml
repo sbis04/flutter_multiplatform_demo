@@ -1,6 +1,7 @@
 workflows:
   mobile-workflow:
     name: Mobile Workflow
+    instance_type: mac_mini
     max_build_duration: 60
     environment:
       flutter: stable
@@ -41,6 +42,7 @@ workflows:
           - sbis1999@gmail.com
   web-workflow:
     name: Web Workflow
+    instance_type: mac_mini
     max_build_duration: 60
     environment:
       flutter: stable
@@ -77,6 +79,7 @@ workflows:
           - sbis1999@gmail.com
   macos-workflow:
     name: macOS Workflow
+    instance_type: mac_mini
     max_build_duration: 60
     environment:
       flutter: stable
